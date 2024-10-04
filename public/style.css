@@ -179,6 +179,11 @@ header .container {
 .nav.active .nav-list li {
     margin: 10px 0; /* Adjust spacing between menu items */
 }
+.openAi img{
+    width: 40px;
+    height: 20px;
+
+}
 
 .home {
     display: flex;
@@ -520,72 +525,89 @@ header .container {
 .resource-title:hover {
     color: var(--text-color);
 }
-lawyers-section {
+/* Lawyer Section Styling */
+.lawyers-section {
     background-color: #f3f4f6;
     padding: 4rem 1rem;
-  }
+}
 
-  .lawyers-section h1 {
+/* Center the heading and adjust the spacing */
+.lawyers-section h1 {
     text-align: center;
     font-size: 2.5rem;
     color: #1f2937;
-    margin-top: 4rem;
+    margin-top: 5rem;      /* Adjusted margin to better align it */
+    margin-bottom: 3rem;   /* Add bottom margin for spacing */
     font-weight: bold;
-  }
+}
 
-  .lawyers-container {
+/* Container for the lawyer cards */
+.lawyers-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  /* Responsive grid layout */
+    gap: 2rem;            /* Space between cards */
+    max-width: 1200px;    /* Maximum width for container */
+    margin: 0 auto;       /* Center the container */
+    padding-top: 2rem;    /* Add some padding at the top for more spacing */
+}
 
-  .lawyer-card {
+/* Individual Lawyer Card */
+.lawyer-card {
     background: white;
     border-radius: 0.5rem;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
-  }
+    transition: transform 0.3s, box-shadow 0.3s;
+}
 
-  .lawyer-card:hover {
+/* Hover effect for cards */
+.lawyer-card:hover {
     transform: translateY(-5px);
-  }
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow for hover */
+}
 
-  .lawyer-card img {
+/* Lawyer image styling */
+.lawyer-card img {
     width: 100%;
     height: 400px;
-    object-fit: cover;
-  }
+    object-fit: cover; /* Ensures the image covers the full space without distortion */
+}
 
-  .lawyer-info {
+/* Lawyer Info section inside the card */
+.lawyer-info {
     padding: 1.5rem;
-  }
+    text-align: left;   /* Center text inside the card */
+}
 
-  .lawyer-info h2 {
-    font-size: 1.5rem;
+/* Lawyer Name (h2) styling */
+.lawyer-info h2 {
+    font-size: 1.75rem;   /* Increase font size for better readability */
     color: #1f2937;
     margin-bottom: 0.5rem;
-  }
+}
 
-  .lawyer-info p {
+/* Lawyer description and other details */
+.lawyer-info p {
     color: #4b5563;
     margin-bottom: 0.5rem;
-    line-height: 1.4;
-  }
+    line-height: 1.6;    /* Increase line spacing for better readability */
+}
 
-  .lawyer-info strong {
+/* Highlight strong text inside card */
+.lawyer-info strong {
     color: #1f2937;
-  }
+}
 
-  .button-container {
+/* Button Container for Contact and Consult Buttons */
+.button-container {
     display: flex;
     gap: 1rem;
+    justify-content: center; /* Center the buttons */
     margin-top: 1.5rem;
-  }
+}
 
-  .contact-btn, .consult-btn {
+/* Styling for both buttons */
+.contact-btn, .consult-btn {
     flex: 1;
     padding: 0.75rem 1rem;
     border: none;
@@ -594,33 +616,38 @@ lawyers-section {
     font-weight: 500;
     text-align: center;
     text-decoration: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+    color: white;
+}
 
-  .contact-btn {
+/* Contact Button Styling */
+.contact-btn {
     background-color: #2563eb;
-    color: white;
-  }
+}
 
-  .contact-btn:hover {
+.contact-btn:hover {
     background-color: #1d4ed8;
-  }
+    transform: scale(1.05); /* Slight scale effect on hover */
+}
 
-  .consult-btn {
+/* Consult Button Styling */
+.consult-btn {
     background-color: #059669;
-    color: white;
-  }
+}
 
-  .consult-btn:hover {
+.consult-btn:hover {
     background-color: #047857;
-  }
+    transform: scale(1.05); /* Slight scale effect on hover */
+}
 
-  .fa-icon {
+/* FontAwesome icon styling (optional) */
+.fa-icon {
     margin-right: 0.5rem;
-  }
+}
+
 
   @media (max-width: 768px) {
     .lawyers-container {

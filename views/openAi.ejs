@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Response</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+         
+         form{
+            padding-top: 40px;
+         }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h2 class="logo">Haki Hub</h2>
+    
+            <nav class="nav" id="main-nav">
+                <ul class="nav-list">
+                   <li><a href="/">Home</a></li>
+                   <li><a href="/legal-resources">Legal Resources</a></li>
+                   <li><a href="/lawyers">Lawyers</a></li>
+                   <li class="dropdown">
+                    <a href="#" class="nav-link">Consultations</a>
+                    <ul class="dropdown-content">
+                        <li><a href="#">Booking page</a></li>
+                        <li><a href="#">Management page</a></li>
+                    </ul>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="nav-link">Profile</a>
+                    <ul class="dropdown-content">
+                        <li><a href="#">Users</a></li>
+                        <li><a href="/lawyersProfile">Lawyers</a></li>
+                    </ul>
+                </li>
+                </ul>
+            </nav>
+    
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" placeholder="Search..." class="search-input">
+                    <i class="fas fa-search"></i>
+                </div>
+                <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
+                <a href="/openAi" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
+            </div>
+            
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-times"></i>
+            </button>
+        </div> 
+    </header>
+    <div class="container">
+        <h1>AI Assistant</h1>
+        
+        <form action="/openAi" method="POST">
+            <div class="form-group">
+                <label for="question">Your Question:</label><br>
+                <textarea id="question" name="question" rows="4" required><%= locals.question || '' %></textarea>
+            </div>
+            <button type="submit">Ask AI</button>
+        </form>
+
+        <% if (locals.error) { %>
+            <div class="error">
+                <p><strong>Error:</strong> <%= locals.error %></p>
+            </div>
+        <% } %>
+
+        <% if (locals.response) { %>
+            <div class="response">
+                <h2>AI Response</h2>
+                <p><strong>Your Question:</strong> <%= locals.question %></p>
+                <p><strong>AI Response:</strong> <%= locals.response %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        // Add client-side form submission handling
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const button = this.querySelector('button');
+            button.disabled = true;
+            button.textContent = 'Asking AI...';
+        });
+    </script>
+</body>
+</html>
