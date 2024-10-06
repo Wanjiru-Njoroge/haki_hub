@@ -41,7 +41,7 @@
                     <i class="fas fa-search"></i>
                 </div>
                 <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
-                <a href="/openAi" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
+                <a href="/Ai" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
             </div>
             
             <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
@@ -102,7 +102,13 @@
             </div>
             <button type="submit">Login</button>
             <p>Don't have an account? <a href="#" id="showRegister">Sign Up</a></p>
-        </form
+        </form>
+        <% if (error_msg.length > 0) { %>
+            <div class="alert alert-danger"><%= error_msg %></div>
+          <% } %>
+          <% if (success_msg.length > 0) { %>
+            <div class="alert alert-success"><%= success_msg %></div>
+          <% } %>
     </section>
 
     <script defer src="/script.js"></script>

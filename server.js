@@ -4,13 +4,36 @@ const path = require('path');
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt'); // Make sure bcrypt is included
+const bcrypt = require('bcrypt');
 const multer = require('multer');
 const fs = require('fs');
-const OpenAI = require('openai');
+const session = require('express-session');
+const passport = require('passport');
+
+const LocalStrategy = require('passport-local').Strategy;
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Load environment variables
 dotenv.config();
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views')); // Your EJS files will be in the 'views' folder
+
+// Serve static files (CSS, images, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Session configuration
+app.use(session({
+  secret: process.env.Generated_session_secret,
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Create a connection with the database
 const db = mysql.createConnection({
@@ -20,10 +43,16 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
-// OpenAI setup
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Test connection to the database
+db.connect((err) => {
+  if (err) {
+    return console.log('Error connecting to the database:', err);
+  }
+  return console.log('Connected to the database successfully:', db.threadId);
 });
+
+// OpenAI setup
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Ensure the uploads directory exists
 const uploadDir = path.join(__dirname, 'uploads');
@@ -44,24 +73,6 @@ const storage = multer.diskStorage({
 // Set up multer to handle image uploads
 const upload = multer({ storage: storage });
 
-// Set up body-parser for handling form data
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views')); // Your EJS files will be in the 'views' folder
-
-// Serve static files (CSS, images, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Test connection to the database
-db.connect((err) => {
-  if (err) {
-    return console.log('Error connecting to the database:', err);
-  }
-  return console.log('Connected to the database successfully:', db.threadId);
-});
-
 // Home route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -77,26 +88,6 @@ app.get('/legal-resources', (req, res) => {
     }
     res.render('legal-resources', { resources: results });
   });
-});
-
-// Login page route
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
-});
-
-// Sign-up page route
-app.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, 'signup.html'));
-});
-
-// Consultation Booking route
-app.get('/book-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'book-consultation.html'));
-});
-
-// Consultation Management route
-app.get('/manage-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'manage-consultation.html'));
 });
 
 // Route to display the form for creating or editing a lawyer's profile
@@ -132,36 +123,64 @@ app.get('/lawyer', (req, res) => {
   });
 });
 
-// OpenAI page route
-app.get('/openAi', (req, res) => {
-  res.render('openAi', { question: '', response: '' }); // Initialize with empty values
+// Login page route
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// Handle OpenAI query
-app.post('/openAi', async (req, res) => {
+// Sign-up page route
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'signup.html'));
+});
+
+// Consultation Booking route
+app.get('/book-consultation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'book-consultation.html'));
+});
+
+// Consultation Management route
+app.get('/manage-consultation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'manage-consultation.html'));
+});
+
+// AI Interaction route
+app.get('/Ai', (req, res) => {
+  res.render('Ai', { question: '', response: '' }); // Render the form initially
+});
+
+app.post('/Ai', async (req, res) => {
+  const { question } = req.body; // Get the user's input from the form
+
   try {
-    const userInput = req.body.question || '';
-    console.log('User Input:', userInput); // Log user input
-    
-    // OpenAI API call with correct structure
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",  // Use the latest model
-      messages: [{ role: "user", content: userInput }],
+    // Initialize the model
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    // Start the interactive chat
+    const chat = model.startChat({
+      history: [
+        {
+          role: 'user',
+          parts: [{ text: 'Hello' }],
+        },
+        {
+          role: 'model',
+          parts: [{ text: 'Great to meet you. What would you like to know?' }],
+        },
+      ],
     });
 
-    const aiResponse = completion.choices[0].message.content.trim();
-    console.log('AI Response:', aiResponse); // Log AI response
-    
-    res.render('openAi', {
-      question: userInput,    // Reflect back the user's question
-      response: aiResponse    // Show the AI response
-    });
-  } catch (err) {
-    console.error('Error:', err); // Log the error
-    res.render('openAi', {
-      question: req.body.question || '',
-      response: 'Error: Unable to get response from AI.',
-      error: err.message
+    // Send user's question as a message to the chat
+    let result = await chat.sendMessage(question);
+    let response = result.response.text();
+    response = response.replace(/\*/g, '');
+
+    // Render the result on the page
+    res.render('Ai', { question, response });
+  } catch (error) {
+    console.error('Error generating AI response:', error);
+    res.render('Ai', {
+      question,
+      response: 'Sorry, there was an error generating the response. Please try again.',
     });
   }
 });
@@ -194,64 +213,80 @@ app.post('/signup', async (req, res) => {
     res.status(500).send('Error saving user.');
   }
 });
-// Login Route
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
 
-  try {
-      // Check if user exists in the database
+// Passport Local Strategy
+passport.use(new LocalStrategy(
+  async (email, password, done) => {
+    try {
       const [userRows] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
-
       if (userRows.length === 0) {
-          return res.status(400).send('User not found.');
+        return done(null, false, { message: 'Incorrect email or password.' });
       }
-
       const user = userRows[0];
 
       // Compare entered password with the hashed password in the database
       const match = await bcrypt.compare(password, user.password_hash);
-
       if (!match) {
-          return res.status(400).send('Invalid password.');
+        return done(null, false, { message: 'Incorrect email or password.' });
       }
 
-      // Redirect to the user's profile after successful login
-      res.redirect(`/user/${user.user_id}`);
-  } catch (err) {
-      console.error(err);
-      res.status(500).send('Error logging in user.');
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  }
+));
+
+// Serialize user
+passport.serializeUser(function(user, done) {
+  done(null, user.user_id);
+});
+
+// Deserialize user
+passport.deserializeUser(async function(id, done) {
+  const [userRows] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [id]);
+  if (userRows.length > 0) {
+    done(null, userRows[0]);
+  } else {
+    done(new Error('User not found'));
   }
 });
 
-// User Profile Route
-app.get('/user/:userId', async (req, res) => {
-  const userId = req.params.userId;  // Get the userId from the URL
+// Login Route
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
+
+// Middleware to check authentication
+function checkAuthentication(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login'); // Redirect if not authenticated
+  }
+  next(); // Proceed to the next middleware or route handler
+}
+
+// User Profile Route with Authentication
+app.get('/user/:userId', checkAuthentication, async (req, res) => {
+  const userId = req.params.userId;
 
   try {
-    // Fetch user data from the database
     const [userRows] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
 
-    if (userRows.length === 0) {
-      return res.status(404).send('User not found.');
+    if (userRows.length > 0) {
+      res.render('userProfile', { user: userRows[0] });
+    } else {
+      res.status(404).send('User not found');
     }
-
-    const user = userRows[0];  // Extract user data
-
-    // Fetch the user's consultations from the database (if applicable)
-    const [consultations] = await db.promise().query('SELECT * FROM consultations WHERE user_id = ?', [userId]);
-
-    // Render the profile page, passing the user and consultations data to the template
-    res.render('user', { user, consultations });
-
   } catch (err) {
-    console.error('Error loading profile:', err);
-    res.status(500).send('Error loading profile.');
+    console.error(err);
+    res.status(500).send('Error fetching user data');
   }
 });
 
-
-// Test if the server is running
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
