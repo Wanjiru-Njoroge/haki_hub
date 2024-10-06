@@ -17,7 +17,7 @@
                 <ul class="nav-list">
                    <li><a href="/">Home</a></li>
                    <li><a href="/legal-resources">Legal Resources</a></li>
-                   <li><a href="/lawyers">Lawyers</a></li>
+                   <li><a href="/lawyer">Lawyers</a></li>
                    <li class="dropdown">
                     <a href="#" class="nav-link">Consultations</a>
                     <ul class="dropdown-content">
@@ -40,7 +40,8 @@
                     <input type="text" placeholder="Search..." class="search-input">
                     <i class="fas fa-search"></i>
                 </div>
-                <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+                <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
+                <a href="/openAi" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
             </div>
             
             <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
@@ -51,7 +52,7 @@
     </header>
     <h1>Create Lawyer Profile</h1>
     <section>
-    <form action="/lawyers/save" method="POST" enctype="multipart/form-data">
+    <form action="/lawyersProfile/save" method="POST" enctype="multipart/form-data">
         <label for="image">Profile Image:</label>
         <input type="file" name="image" id="image" accept="image/*" required><br>
 
@@ -82,5 +83,6 @@
         <button type="submit">Save Profile</button>
     </form>
 </section>
+<script  defer src="/script.js"></script>
 </body>
 </html>

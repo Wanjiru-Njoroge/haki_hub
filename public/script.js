@@ -74,27 +74,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Login form validation
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+        event.preventDefault();  // Prevent default form submission
+    
+        // Fetch input values
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
-
-        if (!validateEmail(email)) {
-            alert("Please enter a valid email address.");
-            return;
+    
+        // Send login data to the server
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+    
+            if (response.ok) {
+                // Redirect to the user profile page
+                window.location.href = '/user';
+            } else {
+                const errorText = await response.text();
+                document.getElementById("emailError").textContent = errorText;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById("emailError").textContent = 'An error occurred. Please try again.';
         }
-
-        if (password === "") {
-            alert("Please enter your password.");
-            return;
-        } else if (password.length < 8) {
-            alert("Password must be at least 8 characters long.");
-            return;
-        }
-
-        alert("Login successful!");
     });
-
+    
     // Email validation function
     function validateEmail(email) {
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

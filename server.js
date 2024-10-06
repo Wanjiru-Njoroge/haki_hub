@@ -4,10 +4,12 @@ const path = require('path');
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt'); // Make sure bcrypt is included
 const multer = require('multer');
 const fs = require('fs');
 const OpenAI = require('openai');
 
+// Load environment variables
 dotenv.config();
 
 // Create a connection with the database
@@ -18,6 +20,7 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
+// OpenAI setup
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -66,7 +69,7 @@ app.get('/', (req, res) => {
 
 // Legal Resources route
 app.get('/legal-resources', (req, res) => {
-  const query = 'SELECT * FROM legal_resources';  
+  const query = 'SELECT * FROM legal_resources';
   db.query(query, (err, results) => {
     if (err) {
       console.error('Database Error:', err);
@@ -76,11 +79,65 @@ app.get('/legal-resources', (req, res) => {
   });
 });
 
-// OpenAI API interaction
+// Login page route
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Sign-up page route
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'signup.html'));
+});
+
+// Consultation Booking route
+app.get('/book-consultation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'book-consultation.html'));
+});
+
+// Consultation Management route
+app.get('/manage-consultation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'manage-consultation.html'));
+});
+
+// Route to display the form for creating or editing a lawyer's profile
+app.get('/lawyersProfile', (req, res) => {
+  res.render('lawyersProfile');  // This will render the lawyersProfile.ejs form
+});
+
+// Save lawyer profile data
+app.post('/lawyersProfile/save', upload.single('image'), (req, res) => {
+  const { name, description, specialization, location, email, phone_number, license_number, availability } = req.body;
+  const image = req.file.filename;
+
+  const query = "INSERT INTO lawyers (image, name, description, specialization, location, email, phone_number, license_number, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  
+  db.query(query, [image, name, description, specialization, location, email, phone_number, license_number, availability], (err, result) => {
+    if (err) {
+      console.error('Database Error:', err);
+      return res.status(500).send('Error saving lawyer profile');
+    }
+    res.redirect('/lawyer');  // After saving, redirect to the page that shows all lawyer profiles (lawyer.ejs)
+  });
+});
+
+// Display all lawyer profiles
+app.get('/lawyer', (req, res) => {
+  const query = "SELECT * FROM lawyers";
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Database Error:', err);
+      return res.status(500).send('Error fetching lawyers');
+    }
+    res.render('lawyer', { lawyers: results });  // Render lawyer.ejs with the list of lawyers
+  });
+});
+
+// OpenAI page route
 app.get('/openAi', (req, res) => {
   res.render('openAi', { question: '', response: '' }); // Initialize with empty values
 });
 
+// Handle OpenAI query
 app.post('/openAi', async (req, res) => {
   try {
     const userInput = req.body.question || '';
@@ -109,69 +166,89 @@ app.post('/openAi', async (req, res) => {
   }
 });
 
-// Route to display the form for creating or editing a lawyer's profile
-app.get('/lawyersProfile', (req, res) => {
-  res.render('lawyersProfile');  // This will render the lawyersProfile.ejs form
+// Sign Up Route
+app.post('/signup', async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  console.log('Signup Data:', req.body); // Debugging
+
+  // Validate the input
+  if (!name || !email || !password || password !== confirmPassword) {
+    if (!name) return res.status(400).send('Name is required.');
+    if (!email) return res.status(400).send('Email is required.');
+    if (!password) return res.status(400).send('Password is required.');
+    if (password !== confirmPassword) return res.status(400).send('Passwords do not match.');
+  }
+
+  try {
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert the new user into the database using password_hash
+    await db.promise().query('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)', [name, email, hashedPassword]);
+
+    // Redirect to login page after signup
+    res.redirect('/login');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving user.');
+  }
+});
+// Login Route
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+      // Check if user exists in the database
+      const [userRows] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+
+      if (userRows.length === 0) {
+          return res.status(400).send('User not found.');
+      }
+
+      const user = userRows[0];
+
+      // Compare entered password with the hashed password in the database
+      const match = await bcrypt.compare(password, user.password_hash);
+
+      if (!match) {
+          return res.status(400).send('Invalid password.');
+      }
+
+      // Redirect to the user's profile after successful login
+      res.redirect(`/user/${user.user_id}`);
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Error logging in user.');
+  }
 });
 
-// Save lawyer profile data
-// Route to handle the form submission and save the lawyer's profile
-app.post('/lawyersProfile/save', upload.single('image'), (req, res) => {
-  const { name, description, specialization, location, email, phone_number, license_number, availability } = req.body;
-  const image = req.file.filename;
+// User Profile Route
+app.get('/user/:userId', async (req, res) => {
+  const userId = req.params.userId;  // Get the userId from the URL
 
-  const query = "INSERT INTO lawyers (image, name, description, specialization, location, email, phone_number, license_number, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  
-  db.query(query, [image, name, description, specialization, location, email, phone_number, license_number, availability], (err, result) => {
-    if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error saving lawyer profile');
+  try {
+    // Fetch user data from the database
+    const [userRows] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
+
+    if (userRows.length === 0) {
+      return res.status(404).send('User not found.');
     }
-    res.redirect('/lawyer');  // After saving, redirect to the page that shows all lawyer profiles (lawyer.ejs)
-  });
+
+    const user = userRows[0];  // Extract user data
+
+    // Fetch the user's consultations from the database (if applicable)
+    const [consultations] = await db.promise().query('SELECT * FROM consultations WHERE user_id = ?', [userId]);
+
+    // Render the profile page, passing the user and consultations data to the template
+    res.render('user', { user, consultations });
+
+  } catch (err) {
+    console.error('Error loading profile:', err);
+    res.status(500).send('Error loading profile.');
+  }
 });
 
-
-// Display individual lawyer profile
-// Route to display all saved lawyer profiles
-app.get('/lawyer', (req, res) => {
-  const query = "SELECT * FROM lawyers";
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error fetching lawyers');
-    }
-    res.render('lawyer', { lawyers: results });  // Render lawyer.ejs with the list of lawyers
-  });
-});
-
-
-// Display all lawyer profiles
-app.get('/lawyers', (req, res) => {
-  const query = "SELECT * FROM lawyers";
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error fetching lawyers');
-    }
-    res.render('lawyer', { lawyers: results }); // Render the lawyer.ejs file
-  });
-});
-
-// Login page route
-app.get('/login', (req, res) => { 
-  res.sendFile(path.join(__dirname, 'login.html')); 
-});
-
-// Consultation Booking route
-app.get('/book-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'book-consultation.html'));
-});
-
-// Consultation Management route
-app.get('/manage-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'manage-consultation.html'));
-});
 
 // Test if the server is running
 const port = process.env.PORT || 3000;

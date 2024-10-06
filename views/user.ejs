@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>User Profile</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-  <!--header section starts-->
+
   <header>
     <div class="container">
         <h2 class="logo">Haki Hub</h2>
@@ -28,7 +28,7 @@
               <li class="dropdown">
                 <a href="#" class="nav-link">Profile</a>
                 <ul class="dropdown-content">
-                    <li><a href="#">Users</a></li>
+                    <li><a href="/user">Users</a></li>
                     <li><a href="/lawyersProfile">Lawyers</a></li>
                 </ul>
             </li>
@@ -50,50 +50,17 @@
         </button>
     </div> 
 </header>
-<!--header section ends-->
-<section class="lawyers-section">
-  <h1>Our Lawyers</h1>
-  <div class="lawyers-container">
-    <% lawyers.forEach(lawyer => { %>
-      <div class="lawyer-card">
-        <img src="/uploads/<%= lawyer.image %>" alt="<%= lawyer.name %>">
-        <div class="lawyer-info">
-          <h2><%= lawyer.name %></h2>
-          <p><strong>Specialization:</strong> <%= lawyer.specialization %></p>
-          <p><strong>Location:</strong> <%= lawyer.location %></p>
-          <p><strong>License:</strong> <%= lawyer.license_number %></p>
-          <p><strong>Description:</strong> <%= lawyer.description %></p>
-          <p><strong>Availability:</strong> <%= lawyer.availability %></p>
-          <div class="button-container">
-            <a href="mailto:<%= lawyer.email %>" class="contact-btn">
-              <i class="fa fa-envelope fa-icon"></i> Contact
-            </a>
-            <a href="/book-consultation" class="consult-btn">
-              <i class="fa fa-calendar fa-icon"></i> Book Consultation
-            </a>
-          </div>
-        </div>
-      </div>
+  <h1>Welcome, <%= user.name %>!</h1>
+
+  <h2>Your Upcoming Consultations</h2>
+  <ul>
+    <% consultations.forEach(consultation => { %>
+      <li>
+        Consultation with <%= consultation.lawyer_name %> on <%= consultation.date %> at <%= consultation.time %>
+      </li>
     <% }) %>
-  </div>
-</section>
+  </ul>
 
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.lawyer-card');
-    
-    cards.forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-5px)';
-      });
-      
-      card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-      });
-    });
-  });
-</script>
-<script defer src="/script.js"></script> 
+  <a href="/logout">Logout</a>
 </body>
 </html>
