@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h2 class="logo">Haki Hub</h2>
+
+        <nav class="nav" id="main-nav">
+          <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/legal-resources">Legal Resources</a></li>
+            <li><a href="/lawyer">Lawyers</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Consultations</a>
+              <ul class="dropdown-content">
+                <li><a href="/book-consultation">Booking page</a></li>
+                <li><a href="/manage-consultation">Management page</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Profile</a>
+              <ul class="dropdown-content">
+                <li><a href="/user">Users</a></li>
+                <li><a href="/lawyersProfile">Lawyers</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-input" />
+            <i class="fas fa-search"></i>
+          </div>
+          <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+          <a href="/Ai" class="openAi"
+            ><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""
+          /></a>
+        </div>
+
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </header>
+    <section>
+      <form id="registrationForm" action="/signup" method="POST">
+        <h2>Sign Up</h2>
+
+        <div class="input-container">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            id="name"
+            placeholder="Name"
+            name="name"
+            required
+          />
+        </div>
+
+        <div class="input-container">
+          <i class="fas fa-envelope"></i>
+          <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            name="email"
+            required
+          />
+        </div>
+
+        <div class="input-container">
+          <input
+            type="password"
+            id="registerpassword"
+            placeholder="Password"
+            name="password"
+            required
+          />
+          <i class="fas fa-eye" id="togglePassword" style="cursor: pointer"></i>
+        </div>
+
+        <div class="input-container">
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            required
+          />
+          <i
+            class="fas fa-eye"
+            id="toggleConfirmPassword"
+            style="cursor: pointer"
+          ></i>
+        </div>
+
+        <label class="terms">
+          <input type="checkbox" id="terms" name="terms" required />
+          I accept the <a href="#">Terms and Conditions</a>.
+        </label>
+
+        <button type="submit">Register</button>
+        <p>Do you have an account? <a href="#" id="showLogin">Sign In</a></p>
+      </form>
+
+      <!-- Login form -->
+      <form id="loginForm" action="/login" method="POST">
+        <div class="input-container">
+          <i class="fas fa-envelope"></i>
+          <input
+            type="email"
+            id="loginEmail"
+            name="email"
+            placeholder="Email"
+            required
+          />
+        </div>
+        <div class="error-message" id="emailError"></div>
+        <div class="input-container">
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <i class="fas fa-eye" id="togglePassword" style="cursor: pointer"></i>
+        </div>
+        <button type="submit">Login</button>
+        <p>Don't have an account? <a href="#" id="showRegister">Sign Up</a></p>
+      </form>
+
+      <% if (messages.error) { %>
+      <div class="flash-message flash-error"><%= messages.error %></div>
+      <% } %> <% if (messages.success) { %>
+      <div class="flash-message flash-success"><%= messages.success %></div>
+      <% } %>
+    </section>
+
+    <script defer src="/script.js"></script>
+  </body>
+</html>

@@ -120,7 +120,19 @@ a:hover {
     color: #007bff;
 }
 
-
+.flash-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+.flash-error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+.flash-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
 
 /* Responsive design */
 @media (max-width: 600px) {

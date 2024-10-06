@@ -1,289 +1,429 @@
-const express = require('express');
+// Import required dependencies
+const express = require("express");
 const app = express();
-const path = require('path');
-const mysql = require('mysql2');
-const dotenv = require('dotenv');
-const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
-const multer = require('multer');
-const fs = require('fs');
-const session = require('express-session');
-const passport = require('passport');
-
-const LocalStrategy = require('passport-local').Strategy;
+const path = require("path");
+const mysql = require("mysql2");
+const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
+const multer = require("multer");
+const fs = require("fs");
+const session = require("express-session");
+const passport = require("passport");
+const flash = require("express-flash");
+const LocalStrategy = require("passport-local").Strategy;
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const router = express.Router();
 
-// Load environment variables
+// Load environment variables from .env file
 dotenv.config();
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views')); // Your EJS files will be in the 'views' folder
+// Set up view engine and views directory
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-// Serve static files (CSS, images, etc.)
-app.use(express.static(path.join(__dirname, 'public')));
+// Middleware setup
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, "public")));
+// Parse JSON and URL-encoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Session configuration
-app.use(session({
-  secret: process.env.Generated_session_secret,
-  resave: false,
-  saveUninitialized: false
-}));
+// Configure session middleware for user sessions
+app.use(
+  session({
+    secret: process.env.Generated_session_secret,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-// Passport initialization
+// Enable flash messages for user feedback
+app.use(flash());
+
+// Initialize Passport.js for authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Create a connection with the database
+// Database connection setup
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
 });
 
-// Test connection to the database
+// Test database connection
 db.connect((err) => {
   if (err) {
-    return console.log('Error connecting to the database:', err);
+    return console.log("Error connecting to the database:", err);
   }
-  return console.log('Connected to the database successfully:', db.threadId);
+  return console.log("Connected to the database successfully:", db.threadId);
 });
 
-// OpenAI setup
+// Set up Google's Generative AI
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
-// Ensure the uploads directory exists
-const uploadDir = path.join(__dirname, 'uploads');
+// Create uploads directory if it doesn't exist
+const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-// Set up storage for image uploads
+// Configure multer for handling file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDir);  // Save files in 'uploads/' directory
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));  // Rename file with timestamp
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Configure Passport Local Strategy for authentication
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email, password, done) => {
+      try {
+        // Check if user exists in database
+        const [userRows] = await db
+          .promise()
+          .query("SELECT * FROM users WHERE email = ?", [email]);
+        if (userRows.length === 0) {
+          return done(null, false, { message: "Incorrect email or password." });
+        }
+        const user = userRows[0];
+
+        // Verify password
+        const match = await bcrypt.compare(password, user.password_hash);
+        if (!match) {
+          return done(null, false, { message: "Incorrect email or password." });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+// Serialize user for the session
+passport.serializeUser(function (user, done) {
+  done(null, user.user_id);
+});
+
+// Deserialize user from the session
+passport.deserializeUser(async function (id, done) {
+  try {
+    const [userRows] = await db
+      .promise()
+      .query("SELECT * FROM users WHERE user_id = ?", [id]);
+    if (userRows.length > 0) {
+      done(null, userRows[0]);
+    } else {
+      done(new Error("User not found"));
+    }
+  } catch (err) {
+    done(err);
   }
 });
 
-// Set up multer to handle image uploads
-const upload = multer({ storage: storage });
+// Middleware to check if user is authenticated
+function checkAuthentication(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/login");
+  }
+  next();
+}
 
-// Home route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+// Route Handlers
+
+// Home page route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Legal Resources route
-app.get('/legal-resources', (req, res) => {
-  const query = 'SELECT * FROM legal_resources';
+// Login routes
+app.get("/login", (req, res) => {
+  res.render("login", { messages: req.flash() });
+});
+
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/user",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
+
+// Signup routes
+app.get("/signup", (req, res) => {
+  res.render("signup", { messages: req.flash() });
+});
+
+// Handle user registration
+app.post("/signup", async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  try {
+    // Validate input
+    if (!name || !email || !password) {
+      req.flash("error", "All fields are required.");
+      return res.redirect("/signup");
+    }
+    if (password !== confirmPassword) {
+      req.flash("error", "Passwords do not match.");
+      return res.redirect("/signup");
+    }
+
+    // Check for existing user
+    const [existingUsers] = await db
+      .promise()
+      .query("SELECT * FROM users WHERE email = ?", [email]);
+    if (existingUsers.length > 0) {
+      req.flash("error", "Email already registered.");
+      return res.redirect("/signup");
+    }
+
+    // Create new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db
+      .promise()
+      .query(
+        "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+        [name, email, hashedPassword]
+      );
+
+    req.flash("success", "Registration successful. Please log in.");
+    res.redirect("/login");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "An error occurred during registration.");
+    res.redirect("/signup");
+  }
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
+// Legal resources route - fetches and displays legal resources
+app.get("/legal-resources", (req, res) => {
+  const query = "SELECT * FROM legal_resources";
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error fetching legal resources');
+      console.error("Database Error:", err);
+      return res.status(500).send("Error fetching legal resources");
     }
-    res.render('legal-resources', { resources: results });
+    res.render("legal-resources", { resources: results });
   });
 });
 
-// Route to display the form for creating or editing a lawyer's profile
-app.get('/lawyersProfile', (req, res) => {
-  res.render('lawyersProfile');  // This will render the lawyersProfile.ejs form
+// Lawyer profile routes
+app.get("/lawyersProfile", checkAuthentication, (req, res) => {
+  res.render("lawyersProfile");
 });
 
-// Save lawyer profile data
-app.post('/lawyersProfile/save', upload.single('image'), (req, res) => {
-  const { name, description, specialization, location, email, phone_number, license_number, availability } = req.body;
-  const image = req.file.filename;
+// Save lawyer profile with image upload
+app.post(
+  "/lawyersProfile/save",
+  checkAuthentication,
+  upload.single("image"),
+  (req, res) => {
+    const {
+      name,
+      description,
+      specialization,
+      location,
+      email,
+      phone_number,
+      license_number,
+      availability,
+    } = req.body;
+    const image = req.file.filename;
 
-  const query = "INSERT INTO lawyers (image, name, description, specialization, location, email, phone_number, license_number, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  
-  db.query(query, [image, name, description, specialization, location, email, phone_number, license_number, availability], (err, result) => {
-    if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error saving lawyer profile');
-    }
-    res.redirect('/lawyer');  // After saving, redirect to the page that shows all lawyer profiles (lawyer.ejs)
-  });
-});
+    // Insert lawyer profile into database
+    const query =
+      "INSERT INTO lawyers (image, name, description, specialization, location, email, phone_number, license_number, availability) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-// Display all lawyer profiles
-app.get('/lawyer', (req, res) => {
+    db.query(
+      query,
+      [
+        image,
+        name,
+        description,
+        specialization,
+        location,
+        email,
+        phone_number,
+        license_number,
+        availability,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Database Error:", err);
+          req.flash("error", "Error saving lawyer profile");
+          return res.redirect("/lawyersProfile");
+        }
+        req.flash("success", "Profile saved successfully");
+        res.redirect("/lawyer");
+      }
+    );
+  }
+);
+
+// Display all lawyers
+app.get("/lawyer", (req, res) => {
   const query = "SELECT * FROM lawyers";
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Database Error:', err);
-      return res.status(500).send('Error fetching lawyers');
+      console.error("Database Error:", err);
+      req.flash("error", "Error fetching lawyers");
+      return res.redirect("/");
     }
-    res.render('lawyer', { lawyers: results });  // Render lawyer.ejs with the list of lawyers
+    res.render("lawyer", { lawyers: results });
   });
 });
 
-// Login page route
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
+// User profile routes
+app.get("/user", checkAuthentication, (req, res) => {
+  res.redirect(`/user/${req.user.user_id}`);
 });
 
-// Sign-up page route
-app.get('/signup', (req, res) => {
-  res.sendFile(path.join(__dirname, 'signup.html'));
-});
-
-// Consultation Booking route
-app.get('/book-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'book-consultation.html'));
-});
-
-// Consultation Management route
-app.get('/manage-consultation', (req, res) => {
-  res.sendFile(path.join(__dirname, 'manage-consultation.html'));
-});
-
-// AI Interaction route
-app.get('/Ai', (req, res) => {
-  res.render('Ai', { question: '', response: '' }); // Render the form initially
-});
-
-app.post('/Ai', async (req, res) => {
-  const { question } = req.body; // Get the user's input from the form
+// Display specific user profile
+app.get("/user/:userId", checkAuthentication, async (req, res) => {
+  const userId = req.params.userId;
 
   try {
-    // Initialize the model
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const [userRows] = await db
+      .promise()
+      .query("SELECT * FROM users WHERE user_id = ?", [userId]);
 
-    // Start the interactive chat
+    if (userRows.length > 0) {
+      const isOwnProfile = req.user.user_id === parseInt(userId);
+      res.render("user", {
+        user: userRows[0],
+        isOwnProfile: isOwnProfile,
+      });
+    } else {
+      req.flash("error", "User not found");
+      res.redirect("/");
+    }
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Error fetching user data");
+    res.redirect("/");
+  }
+});
+
+// AI chat routes
+app.get("/Ai", checkAuthentication, (req, res) => {
+  res.render("Ai", { question: "", response: "" });
+});
+
+// Handle AI chat requests
+app.post("/Ai", checkAuthentication, async (req, res) => {
+  const { question } = req.body;
+
+  try {
+    // Initialize AI model and chat
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const chat = model.startChat({
       history: [
         {
-          role: 'user',
-          parts: [{ text: 'Hello' }],
+          role: "user",
+          parts: [{ text: "Hello" }],
         },
         {
-          role: 'model',
-          parts: [{ text: 'Great to meet you. What would you like to know?' }],
+          role: "model",
+          parts: [{ text: "Great to meet you. What would you like to know?" }],
         },
       ],
     });
 
-    // Send user's question as a message to the chat
+    // Get AI response
     let result = await chat.sendMessage(question);
     let response = result.response.text();
-    response = response.replace(/\*/g, '');
+    response = response.replace(/\*/g, "");
 
-    // Render the result on the page
-    res.render('Ai', { question, response });
+    res.render("Ai", { question, response });
   } catch (error) {
-    console.error('Error generating AI response:', error);
-    res.render('Ai', {
+    console.error("Error generating AI response:", error);
+    req.flash("error", "Error generating AI response");
+    res.render("Ai", {
       question,
-      response: 'Sorry, there was an error generating the response. Please try again.',
+      response:
+        "Sorry, there was an error generating the response. Please try again.",
     });
   }
 });
 
-// Sign Up Route
-app.post('/signup', async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
-
-  console.log('Signup Data:', req.body); // Debugging
-
-  // Validate the input
-  if (!name || !email || !password || password !== confirmPassword) {
-    if (!name) return res.status(400).send('Name is required.');
-    if (!email) return res.status(400).send('Email is required.');
-    if (!password) return res.status(400).send('Password is required.');
-    if (password !== confirmPassword) return res.status(400).send('Passwords do not match.');
-  }
-
-  try {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert the new user into the database using password_hash
-    await db.promise().query('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)', [name, email, hashedPassword]);
-
-    // Redirect to login page after signup
-    res.redirect('/login');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error saving user.');
-  }
+// Consultation booking routes
+router.get("/book-consultation", checkAuthentication, (req, res) => {
+  const sql = "SELECT * FROM lawyers";
+  db.query(sql, (error, lawyers) => {
+    if (error) throw error;
+    res.render("book-consultation", { lawyers });
+  });
 });
 
-// Passport Local Strategy
-passport.use(new LocalStrategy(
-  async (email, password, done) => {
-    try {
-      const [userRows] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
-      if (userRows.length === 0) {
-        return done(null, false, { message: 'Incorrect email or password.' });
-      }
-      const user = userRows[0];
+// Handle consultation booking
+app.post("/book-consultation", (req, res) => {
+  const { user_id, lawyer_id, date, time } = req.body;
 
-      // Compare entered password with the hashed password in the database
-      const match = await bcrypt.compare(password, user.password_hash);
-      if (!match) {
-        return done(null, false, { message: 'Incorrect email or password.' });
-      }
+  const sql =
+    "INSERT INTO consultations (user_id, lawyer_id, date, time) VALUES (?, ?, ?, ?)";
+  db.query(sql, [clientName, lawyerName, date, time], (error, results) => {
+    if (error) throw error;
+    res.redirect("/manage-consultation");
+  });
+});
 
-      return done(null, user);
-    } catch (err) {
-      return done(err);
+// Handle consultation submission
+app.post("/submit-consultation", (req, res) => {
+  const { user_name, lawyer_name, date, time } = req.body;
+
+  const sql =
+    "INSERT INTO consultations (user_name, lawyer_name, date, time) VALUES (?, ?, ?, ?)";
+  db.query(sql, [user_name, lawyer_name, date, time], (error, results) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).send("Internal Server Error");
     }
-  }
-));
-
-// Serialize user
-passport.serializeUser(function(user, done) {
-  done(null, user.user_id);
+    res.redirect("/manage-consultation");
+  });
 });
 
-// Deserialize user
-passport.deserializeUser(async function(id, done) {
-  const [userRows] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [id]);
-  if (userRows.length > 0) {
-    done(null, userRows[0]);
-  } else {
-    done(new Error('User not found'));
-  }
+// Manage consultations route
+router.get("/manage-consultation", checkAuthentication, (req, res) => {
+  const sql = "SELECT * FROM consultations";
+  db.query(sql, (error, results) => {
+    if (error) throw error;
+    res.render("manage-consultation", { consultations: results });
+  });
 });
 
-// Login Route
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
+// Use the router
+app.use("/", router);
 
-// Middleware to check authentication
-function checkAuthentication(req, res, next) {
-  if (!req.isAuthenticated()) {
-    return res.redirect('/login'); // Redirect if not authenticated
-  }
-  next(); // Proceed to the next middleware or route handler
-}
-
-// User Profile Route with Authentication
-app.get('/user/:userId', checkAuthentication, async (req, res) => {
-  const userId = req.params.userId;
-
-  try {
-    const [userRows] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
-
-    if (userRows.length > 0) {
-      res.render('userProfile', { user: userRows[0] });
-    } else {
-      res.status(404).send('User not found');
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error fetching user data');
-  }
-});
+// Export the router for use in other files
+module.exports = router;
 
 // Start the server
 const PORT = process.env.PORT || 3000;

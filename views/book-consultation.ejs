@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Consultation</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <style>
+.consultations {
+            max-width: 600px;
+            margin: 120px auto 2rem;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        /* Form styles */
+        .consultation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        select,
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            background-color: #1a73e8;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #1557b0;
+        }
+
+        /* Flash message styles */
+        .flash-message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .flash-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f5f7fa;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .nav-list {
+                display: none;
+            }
+
+            .consultations {
+                margin: 100px 1rem 2rem;
+                padding: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h2 class="logo">Haki Hub</h2>
+            <nav class="nav" id="main-nav">
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="/legal-resources">Legal Resources</a></li>
+                    <li><a href="/lawyer">Lawyers</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Consultations</a>
+                        <ul class="dropdown-content">
+                            <li><a href="/book-consultation">Booking page</a></li>
+                            <li><a href="/manage-consultation">Management page</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="nav-link">Profile</a>
+                        <ul class="dropdown-content">
+                            <li><a href="/user">Users</a></li>
+                            <li><a href="/lawyersProfile">Lawyers</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" placeholder="Search..." class="search-input">
+                    <i class="fas fa-search"></i>
+                </div>
+                <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+                <a href="/Ai" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
+            </div>
+            
+            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="consultations">
+            <h1>Book a Consultation</h1>
+        
+            <% if (messages && messages.error) { %>
+                <div class="flash-message flash-error">
+                    <%= messages.error %>
+                </div>
+            <% } %>
+    
+            <form action="/submit-consultation" method="POST" class="consultation-form">
+                <div class="form-group">
+                    <label for="lawyer">Select Lawyer:</label>
+                    <select name="lawyer">
+                        <option value="">Choose a lawyer...</option>
+                        <% lawyers.forEach(function(lawyer) { %>
+                            <option value="<%= lawyer.license_number %>"><%= lawyer.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label for="date">Select Date:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="time">Select Time:</label>
+                    <input type="time" id="time" name="time" required>
+                </div>
+    
+                <div class="form-group">
+                    <label for="message">Additional Information:</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Any additional information..."></textarea>
+                </div>
+    
+                <button type="submit" class="btn-submit">Book Consultation</button>
+            </form>
+    
+            <p><a href="/">Back to Home</a></p>
+        </main>
+    
+        <footer>
+            <p>&copy; 2024 Haki Hub. All Rights Reserved.</p>
+        </footer>
+
+        </div>
+       
+</body>
+</html>

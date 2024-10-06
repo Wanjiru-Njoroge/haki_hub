@@ -48,6 +48,23 @@ CREATE TABLE consultations (
      FOREIGN KEY (lawyer_id) REFERENCES lawyers(id)
 );
 
+
+ALTER TABLE consultations
+DROP COLUMN user_id,
+DROP COLUMN lawyer_id;
+
+
+ALTER TABLE consultations
+ADD user_name VARCHAR(255),
+ADD lawyer_name VARCHAR(255);
+
+
+SELECT consultations.id, users.name AS user_name, lawyers.name AS lawyer_name, consultations.date, consultations.time, consultations.status
+FROM consultations
+JOIN users ON consultations.user_name = users.name
+JOIN lawyers ON consultations.lawyer_name = lawyers.name;
+
+
 CREATE TABLE law_firms (
      id INT AUTO_INCREMENT PRIMARY KEY,
      name VARCHAR(100) NOT NULL,

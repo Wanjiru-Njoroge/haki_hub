@@ -1,200 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Haki Hub</title>
     <link rel="stylesheet" href="/style.css"">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
     <!--header section starts-->
     <header>
-        <div class="container">
-            <h2 class="logo">Haki Hub</h2>
-    
-            <nav class="nav" id="main-nav">
-                <ul class="nav-list">
-                   <li><a href="/">Home</a></li>
-                   <li><a href="/legal-resources">Legal Resources</a></li>
-                   <li><a href="/lawyer">Lawyers</a></li>
-                   <li class="dropdown">
-                    <a href="#" class="nav-link">Consultations</a>
-                    <ul class="dropdown-content">
-                        <li><a href="#">Booking page</a></li>
-                        <li><a href="#">Management page</a></li>
-                    </ul>
-                  </li>
-                  <li class="dropdown">
-                    <a href="#" class="nav-link">Profile</a>
-                    <ul class="dropdown-content">
-                        <li><a href="/user">Users</a></li>
-                        <li><a href="/lawyersProfile">Lawyers</a></li>
-                    </ul>
-                </li>
-                </ul>
-            </nav>
-    
-            <div class="header-actions">
-                <div class="search-container">
-                    <input type="text" placeholder="Search..." class="search-input">
-                    <i class="fas fa-search"></i>
-                </div>
-                <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
-                <a href="/Ai" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
-            </div>
-            
-            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-times"></i>
-            </button>
-        </div> 
+      <div class="container">
+        <h2 class="logo">Haki Hub</h2>
+
+        <nav class="nav" id="main-nav">
+          <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/legal-resources">Legal Resources</a></li>
+            <li><a href="/lawyer">Lawyers</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Consultations</a>
+              <ul class="dropdown-content">
+                <li><a href="/book-consultation">Booking page</a></li>
+                <li><a href="/manage-consultation">Management page</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Profile</a>
+              <ul class="dropdown-content">
+                <li><a href="/user">Users</a></li>
+                <li><a href="/lawyersProfile">Lawyers</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-input" />
+            <i class="fas fa-search"></i>
+          </div>
+          <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+          <a href="/Ai" class="openAi"
+            ><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""
+          /></a>
+        </div>
+
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </header>
     <!--header section ends-->
     <!--hero section starts-->
     <section class="home" id="home">
-        <div class="content">
-          <h3>Justice for All, Access for Everyone</h3>
-          <p>
-            Empowering you with legal resources and consultations at your fingertips.
-          </p>
-          <a href="/login" class="hero-btn">Sign Up</a>
-        </div>
-      </section>
+      <div class="content">
+        <h3>Justice for All, Access for Everyone</h3>
+        <p>
+          Empowering you with legal resources and consultations at your
+          fingertips.
+        </p>
+        <a href="/login" class="hero-btn">Sign Up</a>
+      </div>
+    </section>
 
-      <section class="about-us" id="about-us">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-image">
-                    <img src="/images/lady justice.webp" alt="About Us Image">
-                </div>
-                <div class="about-text">
-                    <h2>About Us</h2>
-                    <p>
-                        At <strong>Haki Hub</strong>, we believe that justice is a right, not a privilege. Our mission is to bridge the gap between individuals and essential legal resources by providing accessible, comprehensive, and affordable legal services. Whether you need consultation, legal education, or a pathway to resolve disputes, we are committed to ensuring that everyone has equal access to justice, regardless of their background or circumstances.
-                    </p>
-                    <p>
-                        Based in Kenya, we understand the unique challenges people face in accessing legal support. Through innovative technology and a user-friendly platform, we connect individuals with qualified legal professionals and offer resources tailored to their specific needs. Our goal is to empower you with the knowledge and support to navigate your legal journey with confidence.
-                    </p>
-                </div>
-            </div>
+    <section class="about-us" id="about-us">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-image">
+            <img src="/images/lady justice.webp" alt="About Us Image" />
+          </div>
+          <div class="about-text">
+            <h2>About Us</h2>
+            <p>
+              At <strong>Haki Hub</strong>, we believe that justice is a right,
+              not a privilege. Our mission is to bridge the gap between
+              individuals and essential legal resources by providing accessible,
+              comprehensive, and affordable legal services. Whether you need
+              consultation, legal education, or a pathway to resolve disputes,
+              we are committed to ensuring that everyone has equal access to
+              justice, regardless of their background or circumstances.
+            </p>
+            <p>
+              Based in Kenya, we understand the unique challenges people face in
+              accessing legal support. Through innovative technology and a
+              user-friendly platform, we connect individuals with qualified
+              legal professionals and offer resources tailored to their specific
+              needs. Our goal is to empower you with the knowledge and support
+              to navigate your legal journey with confidence.
+            </p>
+          </div>
         </div>
+      </div>
     </section>
     <section class="services" id="services">
-        <div class="container">
-            <h2>Our Services</h2>
-            <div class="service-cards">
-                <div class="service-card">
-                    <i class="fa fa-gavel"></i>
-                    <h3>Legal Consultation</h3>
-                    <p>Get expert legal advice from qualified professionals, available at your convenience.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fa fa-book"></i>
-                    <h3>Legal Resources</h3>
-                    <p>Access a wide range of legal resources and guides to help you understand your rights.</p>
-                </div>
-                <div class="service-card">
-                    <i class="fa fa-users"></i>
-                    <h3>Pro Bono Services</h3>
-                    <p>Connect with legal aid organizations that offer free legal services to those in need.</p>
-                </div>
-            </div>
+      <div class="container">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+          <div class="service-card">
+            <i class="fa fa-gavel"></i>
+            <h3>Legal Consultation</h3>
+            <p>
+              Get expert legal advice from qualified professionals, available at
+              your convenience.
+            </p>
+          </div>
+          <div class="service-card">
+            <i class="fa fa-book"></i>
+            <h3>Legal Resources</h3>
+            <p>
+              Access a wide range of legal resources and guides to help you
+              understand your rights.
+            </p>
+          </div>
+          <div class="service-card">
+            <i class="fa fa-users"></i>
+            <h3>Pro Bono Services</h3>
+            <p>
+              Connect with legal aid organizations that offer free legal
+              services to those in need.
+            </p>
+          </div>
         </div>
+      </div>
     </section>
     <section class="blog" id="blog">
-        <div class="container">
-            <h2>Latest Articles</h2>
-            <div class="blog-cards">
-                <div class="blog-card">
-                    <h3>The Importance of Legal Aid in Kenya</h3>
-                    <p>Access to justice is a fundamental human right, but many people in Kenya face challenges when seeking legal aid...</p>
-                    <a href="#" class="read-more">Read More</a>
-                </div>
-               
-                <div class="blog-card">
-                    <h3>Understanding Your Rights as a Citizen</h3>
-                    <p>Knowing your rights is the first step in protecting yourself. This article covers the key rights that every Kenyan citizen should be aware of...</p>
-                    <a href="#" class="read-more">Read More</a>
-                </div>
-                <div class="blog-card">
-                    <h3>Understanding Your Rights as a Citizen</h3>
-                    <p>Knowing your rights is the first step in protecting yourself. This article covers the key rights that every Kenyan citizen should be aware of...</p>
-                    <a href="#" class="read-more">Read More</a>
-                </div>
-                <div class="blog-card">
-                    <h3>The Importance of Legal Aid in Kenya</h3>
-                    <p>Access to justice is a fundamental human right, but many people in Kenya face challenges when seeking legal aid...</p>
-                    <a href="#" class="read-more">Read More</a>
-                </div>
-            </div>
+      <div class="container">
+        <h2>Latest Articles</h2>
+        <div class="blog-cards">
+          <div class="blog-card">
+            <h3>The Importance of Legal Aid in Kenya</h3>
+            <p>
+              Access to justice is a fundamental human right, but many people in
+              Kenya face challenges when seeking legal aid...
+            </p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+
+          <div class="blog-card">
+            <h3>Understanding Your Rights as a Citizen</h3>
+            <p>
+              Knowing your rights is the first step in protecting yourself. This
+              article covers the key rights that every Kenyan citizen should be
+              aware of...
+            </p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+          <div class="blog-card">
+            <h3>Understanding Your Rights as a Citizen</h3>
+            <p>
+              Knowing your rights is the first step in protecting yourself. This
+              article covers the key rights that every Kenyan citizen should be
+              aware of...
+            </p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
+          <div class="blog-card">
+            <h3>The Importance of Legal Aid in Kenya</h3>
+            <p>
+              Access to justice is a fundamental human right, but many people in
+              Kenya face challenges when seeking legal aid...
+            </p>
+            <a href="#" class="read-more">Read More</a>
+          </div>
         </div>
+      </div>
     </section>
     <section class="cta" id="cta">
-        <div class="container">
-            <h2>Ready to Get Started?</h2>
-            <p>Join our community today and get access to expert legal support and resources.</p>
-            <a href="#services" class="cta-btn">Get Started Now</a>
-        </div>
+      <div class="container">
+        <h2>Ready to Get Started?</h2>
+        <p>
+          Join our community today and get access to expert legal support and
+          resources.
+        </p>
+        <a href="#services" class="cta-btn">Get Started Now</a>
+      </div>
     </section>
     <section class="partners" id="partners">
-        <div class="container">
-            <h2>Our Partners</h2>
-            <div class="partner-logos">
-                <img src="https://placehold.jp/150x150.png" alt="Partner 1">
-                <img src="https://placehold.jp/150x150.png" alt="Partner 2">
-                <img src="https://placehold.jp/150x150.png" alt="Partner 3">
-            </div>
+      <div class="container">
+        <h2>Our Partners</h2>
+        <div class="partner-logos">
+          <img src="https://placehold.jp/150x150.png" alt="Partner 1" />
+          <img src="https://placehold.jp/150x150.png" alt="Partner 2" />
+          <img src="https://placehold.jp/150x150.png" alt="Partner 3" />
         </div>
+      </div>
     </section>
     <footer class="footer">
-        <div class="container">
-            <div class="footer-row">
-                <div class="footer-column">
-                    <h3>About Us</h3>
-                    <p>Providing access to justice through innovative legal resources and consultations, helping individuals get the support they need, whenever they need it.</p>
-                </div>
-    
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#blog">Blog</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-    
-                <div class="footer-column">
-                    <h3>Contact Us</h3>
-                    <p>Email: contact@yourwebsite.com</p>
-                    <p>Phone: +254 700 123 456</p>
-                    <p>Address: Nairobi, Kenya</p>
-                </div>
-    
-                <div class="footer-column">
-                    <h3>Follow Us</h3>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="footer-row">
+          <div class="footer-column">
+            <h3>About Us</h3>
+            <p>
+              Providing access to justice through innovative legal resources and
+              consultations, helping individuals get the support they need,
+              whenever they need it.
+            </p>
+          </div>
+
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#services">Services</a></li>
+              <li><a href="#blog">Blog</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <p>Email: contact@yourwebsite.com</p>
+            <p>Phone: +254 700 123 456</p>
+            <p>Address: Nairobi, Kenya</p>
+          </div>
+
+          <div class="footer-column">
+            <h3>Follow Us</h3>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
-    
-            <div class="footer-bottom">
-                <p>&copy; 2024 Justice Access. All rights reserved.</p>
-            </div>
+          </div>
         </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2024 Justice Access. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
-    
-        
-        
-    
-    
-   
+
     <script defer src="/script.js"></script>
-</body>
+  </body>
 </html>

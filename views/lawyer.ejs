@@ -1,99 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
-  <!--header section starts-->
-  <header>
-    <div class="container">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <!--header section starts-->
+    <header>
+      <div class="container">
         <h2 class="logo">Haki Hub</h2>
 
         <nav class="nav" id="main-nav">
-            <ul class="nav-list">
-               <li><a href="/">Home</a></li>
-               <li><a href="/legal-resources">Legal Resources</a></li>
-               <li><a href="/lawyer">Lawyers</a></li>
-               <li class="dropdown">
-                <a href="#" class="nav-link">Consultations</a>
-                <ul class="dropdown-content">
-                    <li><a href="#">Booking page</a></li>
-                    <li><a href="#">Management page</a></li>
-                </ul>
-              </li>
-              <li class="dropdown">
-                <a href="#" class="nav-link">Profile</a>
-                <ul class="dropdown-content">
-                    <li><a href="#">Users</a></li>
-                    <li><a href="/lawyersProfile">Lawyers</a></li>
-                </ul>
+          <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/legal-resources">Legal Resources</a></li>
+            <li><a href="/lawyer">Lawyers</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Consultations</a>
+              <ul class="dropdown-content">
+                <li><a href="/book-consultation">Booking page</a></li>
+                <li><a href="/manage-consultation">Management page</a></li>
+              </ul>
             </li>
-            </ul>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Profile</a>
+              <ul class="dropdown-content">
+                <li><a href="/user">Users</a></li>
+                <li><a href="/lawyersProfile">Lawyers</a></li>
+              </ul>
+            </li>
+          </ul>
         </nav>
 
         <div class="header-actions">
-            <div class="search-container">
-                <input type="text" placeholder="Search..." class="search-input">
-                <i class="fas fa-search"></i>
-            </div>
-            <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
-            <a href="/Ai" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
+          <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-input" />
+            <i class="fas fa-search"></i>
+          </div>
+          <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+          <a href="/Ai" class="openAi"
+            ><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""
+          /></a>
         </div>
-        
+
         <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-            <i class="fas fa-bars"></i>
-            <i class="fas fa-times"></i>
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-times"></i>
         </button>
-    </div> 
-</header>
-<!--header section ends-->
-<section class="lawyers-section">
-  <h1>Our Lawyers</h1>
-  <div class="lawyers-container">
-    <% lawyers.forEach(lawyer => { %>
-      <div class="lawyer-card">
-        <img src="/uploads/<%= lawyer.image %>" alt="<%= lawyer.name %>">
-        <div class="lawyer-info">
-          <h2><%= lawyer.name %></h2>
-          <p><strong>Specialization:</strong> <%= lawyer.specialization %></p>
-          <p><strong>Location:</strong> <%= lawyer.location %></p>
-          <p><strong>License:</strong> <%= lawyer.license_number %></p>
-          <p><strong>Description:</strong> <%= lawyer.description %></p>
-          <p><strong>Availability:</strong> <%= lawyer.availability %></p>
-          <div class="button-container">
-            <a href="mailto:<%= lawyer.email %>" class="contact-btn">
-              <i class="fa fa-envelope fa-icon"></i> Contact
-            </a>
-            <a href="/book-consultation" class="consult-btn">
-              <i class="fa fa-calendar fa-icon"></i> Book Consultation
-            </a>
+      </div>
+    </header>
+    <!--header section ends-->
+    <section class="lawyers-section">
+      <h1>Our Lawyers</h1>
+      <div class="lawyers-container">
+        <% lawyers.forEach(lawyer => { %>
+        <div class="lawyer-card">
+          <img src="/uploads/<%= lawyer.image %>" alt="<%= lawyer.name %>" />
+          <div class="lawyer-info">
+            <h2><%= lawyer.name %></h2>
+            <p><strong>Specialization:</strong> <%= lawyer.specialization %></p>
+            <p><strong>Location:</strong> <%= lawyer.location %></p>
+            <p><strong>License:</strong> <%= lawyer.license_number %></p>
+            <p><strong>Description:</strong> <%= lawyer.description %></p>
+            <p><strong>Availability:</strong> <%= lawyer.availability %></p>
+            <div class="button-container">
+              <a href="mailto:<%= lawyer.email %>" class="contact-btn">
+                <i class="fa fa-envelope fa-icon"></i> Contact
+              </a>
+              <a href="/book-consultation" class="consult-btn">
+                <i class="fa fa-calendar fa-icon"></i> Book Consultation
+              </a>
+            </div>
           </div>
         </div>
+        <% }) %>
       </div>
-    <% }) %>
-  </div>
-</section>
+    </section>
 
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const cards = document.querySelectorAll(".lawyer-card");
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.lawyer-card');
-    
-    cards.forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-5px)';
+        cards.forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-5px)";
+          });
+
+          card.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+          });
+        });
       });
-      
-      card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-      });
-    });
-  });
-</script>
-<script defer src="/script.js"></script> 
-</body>
+    </script>
+    <script defer src="/script.js"></script>
+  </body>
 </html>

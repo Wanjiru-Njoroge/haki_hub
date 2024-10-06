@@ -1,0 +1,63 @@
+# Haki Hub
+
+**Haki Hub** is an innovative platform dedicated to bridging the gap between individuals in need of legal assistance and certified legal professionals. Our mission is to improve access to justice by providing a comprehensive solution for legal consultations, pro bono services, and legal resources, with the integration of cutting-edge AI technologies.
+
+## Features
+
+- **Lawyer Profiles**: Browse through verified lawyer profiles with specializations, contact details, and availability.
+- **Consultation Booking**: Schedule and manage legal consultations with just a few clicks.
+- **AI Legal Assistant**: Receive automated legal advice on common queries through our AI-powered chatbot.
+- **Legal Document Generation**: Use AI tools to generate personalized legal documents based on predefined templates.
+- **Legal Resources**: Access a repository of legal documents, guides, and resources.
+- **Secure Communication**: Communicate with lawyers via a secure and confidential platform.
+- **AI-Powered Legal Search**: Quickly find relevant legal resources, cases, and documents using intelligent search algorithms.
+
+## Installation
+
+### 1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/haki-hub.git
+
+### 2.Navigate to the project folder:
+````bash
+cd haki-hub
+
+### 3.Install dependencies:
+````bash
+npm install
+
+### Set up the database:
+-**Create a MySQL database.
+-**Run the SQL scripts provided in the db folder to create the necessary tables.
+
+##Set up environment variables:
+
+-**Copy .env.example to .env and update the values for your database connection and other configurations.
+Start the server:
+```bash
+npm start
+
+Visit the platform at:
+```bash
+http://localhost:3000
+
+#Technologies Used
+
+-**Frontend: HTML, CSS, JavaScript (EJS templating engine)
+ -**Backend: Node.js, Express
+-**Database: MySQL
+-**AI: Natural Language Processing (NLP) for AI legal assistant and document generation
+-**Authentication: Passport.js
+
+#Roadmap
+**Phase 1: Lawyer registration and profile management
+**Phase 2: User registration and consultation booking
+**Phase 3: Pro bono service integration and legal resource expansion
+**Phase 4: Enhanced communication features, AI-driven features, and multi-language support
+
+##Contributing
+Contributions are welcome! Please fork the repository and submit a pull request to propose changes.
+
+##License
+This project is licensed under the MIT License.

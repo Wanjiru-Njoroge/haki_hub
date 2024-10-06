@@ -1,135 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Response</title>
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
     <style>
-         
-        .AI {
-            max-width: 1000px;
-            margin: 0 auto;
-         
-    
-        }
-        
-        h1 {
-            text-align: center;
-            font-size: 2rem;
-            margin-top: 80px;
-        }
-        
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 80px;
-        }
-        
-        input[type="text"] {
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        
-        button {
-            padding: 10px;
-            font-size: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        button:hover {
-            background-color: #45a049;
-        }
-        
-        h2 {
-            margin-top: 20px;
-        }
-        
-        .response {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            white-space: pre-wrap; /* Preserve line breaks and spaces */
-            text-align: left; /* Ensures text and numbers are left aligned */
-            word-wrap: break-word;
-        }
-        
+      .AI {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-top: 80px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 80px;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 1rem;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      h2 {
+        margin-top: 20px;
+      }
+
+      .response {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        white-space: pre-wrap; /* Preserve line breaks and spaces */
+        text-align: left; /* Ensures text and numbers are left aligned */
+        word-wrap: break-word;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div class="container">
-            <h2 class="logo">Haki Hub</h2>
-    
-            <nav class="nav" id="main-nav">
-                <ul class="nav-list">
-                   <li><a href="/">Home</a></li>
-                   <li><a href="/legal-resources">Legal Resources</a></li>
-                   <li><a href="/lawyer">Lawyers</a></li>
-                   <li class="dropdown">
-                    <a href="#" class="nav-link">Consultations</a>
-                    <ul class="dropdown-content">
-                        <li><a href="#">Booking page</a></li>
-                        <li><a href="#">Management page</a></li>
-                    </ul>
-                  </li>
-                  <li class="dropdown">
-                    <a href="#" class="nav-link">Profile</a>
-                    <ul class="dropdown-content">
-                        <li><a href="#">Users</a></li>
-                        <li><a href="/lawyersProfile">Lawyers</a></li>
-                    </ul>
-                </li>
-                </ul>
-            </nav>
-    
-            <div class="header-actions">
-                <div class="search-container">
-                    <input type="text" placeholder="Search..." class="search-input">
-                    <i class="fas fa-search"></i>
-                </div>
-                <a href="/login" class="user-icon"><i class="fas fa-user" ></i></a>
-                <a href="/Ai" class="openAi"><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""></a>
-            </div>
-            
-            <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-times"></i>
-            </button>
-        </div> 
+      <div class="container">
+        <h2 class="logo">Haki Hub</h2>
+
+        <nav class="nav" id="main-nav">
+          <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/legal-resources">Legal Resources</a></li>
+            <li><a href="/lawyer">Lawyers</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Consultations</a>
+              <ul class="dropdown-content">
+                <li><a href="/book-consultation">Booking page</a></li>
+                <li><a href="/manage-consultation">Management page</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Profile</a>
+              <ul class="dropdown-content">
+                <li><a href="/user">Users</a></li>
+                <li><a href="/lawyersProfile">Lawyers</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <div class="search-container">
+            <input type="text" placeholder="Search..." class="search-input" />
+            <i class="fas fa-search"></i>
+          </div>
+          <a href="/login" class="user-icon"><i class="fas fa-user"></i></a>
+          <a href="/Ai" class="openAi"
+            ><img src="/images/ChatGPT-Logo-removebg-preview.png" alt=""
+          /></a>
+        </div>
+
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
     </header>
     <div class="AI">
-        <h1>Ask the AI Anything</h1>
-        <form action="/Ai" method="POST">
-            <label for="question">Your question:</label>
-            <input type="text" id="question" name="question" value="<%= question %>" required>
-            <button type="submit">Ask</button>
-        </form>
-    
-        <% if (response) { %>
-          <h2>AI Response:</h2>
-          <!-- Use <pre> to preserve formatting -->
-          <pre class="response"><%= response %></pre>
-        <% } %>
+      <h1>Ask the AI Anything</h1>
+      <form action="/Ai" method="POST">
+        <label for="question">Your question:</label>
+        <input
+          type="text"
+          id="question"
+          name="question"
+          value="<%= question %>"
+          required
+        />
+        <button type="submit">Ask</button>
+      </form>
+
+      <% if (response) { %>
+      <h2>AI Response:</h2>
+      <!-- Use <pre> to preserve formatting -->
+      <pre class="response"><%= response %></pre>
+      <% } %>
     </div>
-    
 
     <script>
-        // Add client-side form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const button = this.querySelector('button');
-            button.disabled = true;
-            button.textContent = 'Asking AI...';
-        });
+      // Add client-side form submission handling
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const button = this.querySelector("button");
+        button.disabled = true;
+        button.textContent = "Asking AI...";
+      });
     </script>
-</body>
+  </body>
 </html>
